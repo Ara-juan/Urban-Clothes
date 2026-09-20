@@ -17,7 +17,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
   console.error("ERROR FATAL: JWT_SECRET no está definida en el archivo .env");
   process.exit(1);
-} //como medida porque la primera vez no habia descargado eso
+}
 
 // MIDDLEWARE DE AUTENTICACIÓN
 const verificarToken = (req, res, next) => {
@@ -41,12 +41,10 @@ const verificarToken = (req, res, next) => {
 app.post('/api/usuarios/registro', async (req, res) => {
   const { nombre, email, contrasena, telefono, direccion } = req.body;
 
-  // Validación 1: Campos obligatorios
   if (!nombre || !email || !contrasena) {
     return res.status(400).json({ error: "Nombre, email y contraseña son obligatorios." });
   }
 
-  // Validación 2: Formato de correo electrónico
   const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ 
@@ -54,14 +52,12 @@ app.post('/api/usuarios/registro', async (req, res) => {
     });
   }
 
-  // Validación 3: Longitud mínima de la contraseña (Mínimo 8 caracteres)
   if (contrasena.length < 8) {
     return res.status(400).json({ 
       error: "La contraseña debe tener como mínimo 8 caracteres." 
     });
   }
 
-  // Validación 4: Teléfono únicamente numérico (si es proporcionado)
   if (telefono && !/^\d+$/.test(telefono)) {
     return res.status(400).json({ 
       error: "El campo teléfono solo debe contener números." 
@@ -199,5 +195,5 @@ app.delete('/api/usuarios/:id', verificarToken, async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor de Urban Clothes activo en http://localhost:${PORT}`);
+  console.log(`Servidor de Urban Clothes activo en el puerto ${PORT}`);
 });
