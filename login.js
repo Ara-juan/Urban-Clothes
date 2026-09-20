@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api/usuarios';
+const API_URL = 'https://urban-clothes-slc0.onrender.com/api/usuarios';
 
 /**
  * Alterna la visibilidad entre los formularios de Login y Registro
