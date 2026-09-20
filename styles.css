@@ -1,0 +1,86 @@
+/* Fondo general */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background: url('assets/fondo.webp') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  text-align: center;
+}
+
+/* Contenedor principal */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  backdrop-filter: brightness(0.9);
+}
+
+/* Logo */
+.logo {
+  width: 180px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+/* Frase principal */
+.slogan {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: white;
+}
+
+/* Botones */
+.buttons {
+  margin-bottom: 40px;
+}
+
+.buttons p {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.buttons a {
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn {
+  background-color: #007BFF; /* azul */
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  margin: 8px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+/* Footer / Enlace inferior */
+.footer-link {
+  color: white;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: #00ffcc;
+}
+
+.footer {
+  font-size: 14px;
+  margin-top: 20px;
+  cursor: pointer;
+  text-decoration: underline;
+}

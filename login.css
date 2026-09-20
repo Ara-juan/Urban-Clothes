@@ -1,0 +1,116 @@
+/* Fondo general */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background: url('assets/fondo.webp') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.login-container {
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  padding: 15px;
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.form-box {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  margin: auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.form-box h2 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  background: gray;
+  color: white;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.tab.active {
+  background: #007BFF;
+}
+
+.form {
+  display: none;
+}
+
+.form.active {
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: #007BFF;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #0056b3;
+  color: white;
+}
+
+.link {
+  font-size: 14px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  text-decoration: underline;
+  color: #e0e0e0;
+}
+
+.link span {
+  color: #00ffcc;
+}
+
+.link span:hover {
+  text-decoration: underline;
+}

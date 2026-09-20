@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Urban Clothes - Autenticación</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f4f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .container { background: white; padding: 25px 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 420px; }
+    h2 { margin-bottom: 20px; text-align: center; color: #111; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 20px; }
+    .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; color: #777; border-bottom: 2px solid transparent; transition: 0.3s; }
+    .tab.active { color: #111; border-color: #111; }
+    
+    .form-group { display: none; }
+    .form-group.active { display: block; }
+
+    input { width: 100%; padding: 11px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
+    input:focus { border-color: #111; outline: none; }
+    
+    button { width: 100%; padding: 11px; background: #111; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 12px; font-size: 14px; transition: 0.2s; }
+    button:hover { background: #333; }
+
+    .msg { margin-top: 15px; padding: 10px; border-radius: 5px; display: none; text-align: center; font-size: 14px; }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+    .user-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px; }
+    .user-info p { margin: 5px 0; color: #333; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Urban Clothes</h2>
+
+    <div id="tabsHeader" class="tabs">
+      <div class="tab active" onclick="cambiarTab('login')">Iniciar Sesión</div>
+      <div class="tab" onclick="cambiarTab('registro')">Registrarse</div>
+    </div>
+
+    <!-- FORMULARIO DE LOGIN -->
+    <form id="formLogin" class="form-group active">
+      <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+      <input type="password" id="loginContrasena" placeholder="Contraseña" required>
+      <button type="submit">Ingresar</button>
+    </form>
+
+    <!-- FORMULARIO DE REGISTRO -->
+    <form id="formRegistro" class="form-group">
+      <input type="text" id="regNombre" placeholder="Nombre completo" required>
+      <input type="email" id="regEmail" placeholder="Correo electrónico" required>
+      <input type="password" id="regContrasena" placeholder="Contraseña (Mín. 8 caracteres)" minlength="8" required>
+      <input type="tel" id="regTelefono" placeholder="Teléfono (solo números)" pattern="[0-9]+">
+      <input type="text" id="regDireccion" placeholder="Dirección">
+      <button type="submit">Crear Cuenta</button>
+    </form>
+
+    <!-- PANEL DE USUARIO LOGUEADO -->
+    <div id="panelUsuario" class="form-group">
+      <div class="user-info">
+        <p><strong>Bienvenido:</strong> <span id="userNombre"></span></p>
+        <p><strong>Email:</strong> <span id="userEmail"></span></p>
+        <p><strong>Rol:</strong> <span id="userRol"></span></p>
+      </div>
+      <button id="btnCerrarSesion" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+
+    <div id="mensaje" class="msg"></div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api/usuarios';
+    const mensajeDiv = document.getElementById('mensaje');
+
+    document.addEventListener('DOMContentLoaded', verificarSesionActiva);
+
+    function cambiarTab(tipo) {
+      ocultarMensaje();
+      const tabs = document.querySelectorAll('.tab');
+      const forms = document.querySelectorAll('.form-group');
+
+      tabs.forEach(t => t.classList.remove('active'));
+      forms.forEach(f => f.classList.remove('active'));
+
+      if (tipo === 'login') {
+        tabs[0].classList.add('active');
+        document.getElementById('formLogin').classList.add('active');
+      } else {
+        tabs[1].classList.add('active');
+        document.getElementById('formRegistro').classList.add('active');
+      }
+    }
+
+    function mostrarMensaje(texto, esError = false) {
+      mensajeDiv.style.display = 'block';
+      mensajeDiv.className = `msg ${esError ? 'error' : 'success'}`;
+      mensajeDiv.textContent = texto;
+    }
+
+    function ocultarMensaje() {
+      mensajeDiv.style.display = 'none';
+    }
+
+    // PETICIÓN DE REGISTRO
+    document.getElementById('formRegistro').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const datos = {
+        nombre: document.getElementById('regNombre').value,
+        email: document.getElementById('regEmail').value,
+        contrasena: document.getElementById('regContrasena').value,
+        telefono: document.getElementById('regTelefono').value,
+        direccion: document.getElementById('regDireccion').value
+      };
+
+      try {
+        const respuesta = await fetch(`${API_URL}/registro`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+
+        const resultado = await respuesta.json();
+
+        if (respuesta.ok) {
+          mostrarMensaje(resultado.mensaje);
+          document.getElementById('formRegistro').reset();
+          setTimeout(() => cambiarTab('login'), 1500);
+        } else {
+          mostrarMensaje(resultado.error, true);
+        }
+      } catch (err) {
+        mostrarMensaje('Error al conectar con el servidor.', true);
+      }
+    });
+
+    // PETICIÓN DE LOGIN
+    document.getElementById('formLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const datos = {
+        email: document.getElementById('loginEmail').value,
+        contrasena: document.getElementById('loginContrasena').value
+      };
+
+      try {
+        const respuesta = await fetch(`${API_URL}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+
+        const resultado = await respuesta.json();
+
+        if (respuesta.ok) {
+          localStorage.setItem('urban_token', resultado.token);
+          localStorage.setItem('urban_user', JSON.stringify(resultado.usuario));
+          
+          mostrarMensaje(resultado.mensaje);
+          document.getElementById('formLogin').reset();
+          verificarSesionActiva();
+        } else {
+          mostrarMensaje(resultado.error, true);
+        }
+      } catch (err) {
+        mostrarMensaje('Error de conexión con el servidor.', true);
+      }
+    });
+
+    function verificarSesionActiva() {
+      const token = localStorage.getItem('urban_token');
+      const usuario = JSON.parse(localStorage.getItem('urban_user'));
+
+      if (token && usuario) {
+        document.getElementById('tabsHeader').style.display = 'none';
+        document.querySelectorAll('.form-group').forEach(f => f.classList.remove('active'));
+        
+        document.getElementById('userNombre').textContent = usuario.nombre;
+        document.getElementById('userEmail').textContent = usuario.email;
+        document.getElementById('userRol').textContent = usuario.rol;
+        
+        document.getElementById('panelUsuario').classList.add('active');
+      } else {
+        document.getElementById('tabsHeader').style.display = 'flex';
+        document.getElementById('panelUsuario').classList.remove('active');
+        cambiarTab('login');
+      }
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem('urban_token');
+      localStorage.removeItem('urban_user');
+      ocultarMensaje();
+      verificarSesionActiva();
+    }
+  </script>
+</body>
+</html>

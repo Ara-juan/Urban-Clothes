@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Americanoshh - Catálogo</title>
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+  
+  <!-- Estilos Personalizados -->
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <!-- Barra de navegación -->
+  <header>
+    <nav class="navbar">
+      <div class="logo"><a href="acerca de.html"><img src="assets/logo.png" alt="Logo"></a></div>
+      <ul class="nav-links">
+        <li><a href="hombre.html">Hombre</a></li>
+        <li><a href="mujer.html">Mujer</a></li>
+        <li><a href="unisex.html">Unisex</a></li>
+        <li><a href="main.html">Colecciones</a></li>
+        <li><a href="acerca de.html">Acerca de</a></li>
+      </ul>
+      <div class="search-bar">
+        <input type="text" placeholder="Buscar productos...">
+        <button>🔍</button>
+      </div>
+
+      <!-- Contenedor dinámico (Muestra nombre + botón Salir si está logueado, o Iniciar Sesión si es invitado) -->
+      <div id="userMenuNav" class="d-flex align-items-center ms-3"></div>
+    </nav>
+  </header>
+
+  <!-- Sección Hombres -->
+  <section class="catalog">
+    <a href="hombre.html"><h2>Hombres</h2></a>
+    
+    <div class="carousel-container">
+      <button class="arrow left-arrow" onclick="scrollCarousel(this, -1)">&#10094;</button>
+      
+      <div class="products">
+
+        <div class="card" data-desc="La camiseta nothing special es un grito silencioso contra lo ordinario. Su diseño combina la fuerza del arte clásico con frases cargadas de emoción, creando una pieza que refleja la crudeza de la vida urbana y la intensidad de los sentimientos.">
+          <img src="assets/hombre/camiseta nothing special.webp" alt="Camiseta Nothing Special">
+          <h3>Camiseta Nothing Special</h3>
+          <p class="price">$60.000</p>
+          <p class="desc"></p>
+        </div>
+        
+        <div class="card" data-desc="La camiseta adidas no es solo una prenda, es un manifiesto de rebeldía y autenticidad. Con su icónico logo Trefoil en un degradado vibrante de azul y rojo, transmite energía urbana y un espíritu desenfadado que conecta con quienes buscan diferenciarse.">
+          <img src="assets/hombre/camiseta adidas.webp" alt="Camiseta Adidas">
+          <h3>Camiseta Adidas</h3>
+          <p class="price">$50.000</p>
+          <p class="desc"></p>
+        </div>
+
+        <div class="card" data-desc="La camiseta urbana premiun es el equilibrio perfecto entre sofisticación y rebeldía. Su diseño combina tipografía contundente, símbolos gráficos y detalles modernos que la convierten en una pieza insignia del streetwear contemporáneo.">
+          <img src="assets/hombre/camiseta urbana premiun.webp" alt="Camiseta Urbana Premium">
+          <h3>Camisa Urbana Premium</h3>
+          <p class="price">$60.000</p>
+          <p class="desc"></p>
+        </div>
+
+        <div class="card" data-desc="La camiseta rosa human es un símbolo de fuerza y humildad. Con su rosa roja en el centro y la frase “STAY HUMBLE HUSTLE HARD”, transmite un mensaje poderoso: crecer sin olvidar la esencia, luchar sin perder la humanidad.">
+          <img src="assets/hombre/camiseta rosa 2.webp" alt="camiseta rosa human">
+          <h3>camiseta rosa human</h3>
+          <p class="price">$60.000</p>
+          <p class="desc"></p>
+        </div>
+        
+        <div class="card" data-desc="La camiseta till death es una declaración cruda y directa sobre la vida y la mortalidad. Su diseño con un esqueleto azul fumando y frases como “TILL DEATH” y “whether OR NOT” transmite una estética rebelde y desafiante, perfecta para quienes buscan un estilo que rompa esquemas.">
+          <img src="assets/hombre/camiseta till death.webp" alt="camiseta till death">
+          <h3>Camiseta till death</h3>
+          <p class="price">$60.000</p>
+          <p class="desc"></p>
+        </div>
+
+      </div>
+
+      <button class="arrow right-arrow" onclick="scrollCarousel(this, 1)">&#10095;</button>
+    </div>
+  </section>
+
+  <!-- Sección Mujeres -->
+  <section class="catalog">
+    <a href="mujer.html"><h2>Mujeres</h2></a>
+    
+    <div class="carousel-container">
+      <button class="arrow left-arrow" onclick="scrollCarousel(this, -1)">&#10094;</button>
+      
+      <div class="products">
+        <div class="card" data-desc="El crop top yo soy real es una declaración de autenticidad. Con la frase “YO SOY REAL PORQUE LO SOY, NO POR DECIR QUE SOY REAL” en tipografía blanca y roja, esta prenda convierte la moda en un manifiesto de identidad y verdad.">
+          <img src="assets/mujer/crop top yo soy real.webp" alt="Crop top yo soy real">
+          <h3>Crop top yo soy real</h3>
+          <p class="price">$50.000</p>
+          <p class="desc"></p>
+        </div>
+        <div class="card" data-desc="El crop top canserbero es un homenaje gráfico a la voz irreverente y poética del rap latinoamericano. Con su diseño minimalista en blanco sobre negro, transmite fuerza y autenticidad, convirtiéndose en una pieza que conecta la moda urbana con la música y la cultura.">
+          <img src="assets/mujer/crop top canserbero.webp" alt="Crop top canserbero">
+          <h3>Crop top canserbero</h3>
+          <p class="price">$50.000</p>
+          <p class="desc"></p>
+        </div>
+        <div class="card" data-desc="El crop top corazón telaraña izquierda es una pieza que mezcla vulnerabilidad y rebeldía. Con su telaraña rosa en el pecho y frases como “CAUSE I KNOW YOU’RE POISON, ‘CAUSE I’VE DRUNK THE POISON”, transmite un mensaje visceral sobre atracción y peligro.">
+          <img src="assets/mujer/crop top corazon telaraña izquierda.webp" alt="Crop top corazon telaraña izquierda">
+          <h3>Crop top corazon telaraña izquierda</h3>
+          <p class="price">$50.000</p>
+          <p class="desc"></p>
+        </div>
+        <div class="card" data-desc="El crop top gato es una pieza que fusiona lo místico con lo urbano. Su diseño con figuras felinas enfrentadas, rodeadas de cartas, flores y formas abstractas, convierte la prenda en un lienzo de dualidad y poder visual.">
+          <img src="assets/mujer/crop top gato.webp" alt="crop top gato">
+          <h3>Crop top gato</h3>
+          <p class="price">$50.000</p>
+          <p class="desc"></p>
+        </div>
+        <div class="card" data-desc="El crop top telaraña izquierda es una pieza que mezcla delicadeza y veneno. Con su telaraña rosa en el pecho y la frase “CAUSE I KNOW YOU’RE POISON, YOU’RE FEEDIN’ ME POISON” impresa verticalmente, transmite un mensaje directo y visceral.">
+          <img src="assets/mujer/crop top telaraña izquierda blanca.webp" alt="crop top telaraña izquierda blanca">
+          <h3>Crop top telaraña izquierda blanca</h3>
+          <p class="price">$50.000</p>
+          <p class="desc"></p>
+        </div>
+        <div class="card" data-desc="El crop top mi rap es una declaración de identidad y resistencia. Con la frase “MI RAP NO SOLO ES RAP” en tipografía blanca y roja, esta prenda convierte la moda en un manifiesto cultural, reflejando que el rap es más que música: es vida, mensaje y verdad.">
+          <img src="assets/mujer/crop top mi rap.webp" alt="crop top mi rap">
+          <h3>Crop top mi rap</h3>
+          <p class="price">$50.000</p>
+          <p class="desc"></p>
+        </div>
+      </div>
+
+      <button class="arrow right-arrow" onclick="scrollCarousel(this, 1)">&#10095;</button>
+    </div>
+
+    <!--detalles del producto-->
+    <div id="product-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-body">
+          <div class="modal-left">
+            <div class="image-container">
+              <img id="modal-img" src="" alt="Producto">
+            </div>
+          </div>
+          <div class="modal-right">
+            <h1 id="modal-title" class="urban-title"></h1>
+            <p class="modal-stock">En stock</p>
+            <p id="modal-price" class="modal-price"></p>
+            <div class="modal-sizes">
+              <h3 class="urban-subtitle">Tallas</h3>
+              <div class="sizes-grid">
+                <button class="size-btn">XS</button>
+                <button class="size-btn">S</button>
+                <button class="size-btn">M</button>
+                <button class="size-btn">L</button>
+                <button class="size-btn">XL</button>
+              </div>
+            </div>
+            <button class="btn-buy">
+              <span><a href="https://wa.me/573124363561">Compra Ahora</a></span>
+            </button>
+            <p id="modal-desc" class="modal-desc"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Scripts de la Aplicación -->
+  <script src="auth.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
