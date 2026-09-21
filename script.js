@@ -67,43 +67,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-// --- LÓGICA DE BÚSQUEDA LOCAL EN TIEMPO REAL ---
+// --- LÓGICA DE BÚSQUEDA Y FILTRO POR PRECIO ---
   const searchInput = document.querySelector(".search-bar input");
+  const priceFilter = document.getElementById("priceFilter");
+
+  function filtrarProductos() {
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+    const maxPrice = priceFilter ? priceFilter.value : "all";
+
+    document.querySelectorAll(".catalog").forEach((section) => {
+      let hasVisibleCards = false;
+
+      // Si hay un filtro activo (texto o precio), aplicamos el modo fluido
+      if (query.length > 0 || maxPrice !== "all") {
+        section.classList.add("is-searching");
+      } else {
+        section.classList.remove("is-searching");
+      }
+
+      section.querySelectorAll(".card").forEach((card) => {
+        const title = card.querySelector("h3") ? card.querySelector("h3").innerText.toLowerCase() : "";
+        const desc = card.getAttribute("data-desc") ? card.getAttribute("data-desc").toLowerCase() : "";
+        
+        // Extraemos solo los dígitos del precio (ejemplo: "$50.000" -> 50000)
+        const priceText = card.querySelector(".price") ? card.querySelector(".price").innerText : "0";
+        const priceValue = parseInt(priceText.replace(/[^0-9]/g, ""), 10) || 0;
+
+        // Validaciones
+        const matchesText = title.includes(query) || desc.includes(query);
+        const matchesPrice = maxPrice === "all" || priceValue <= parseInt(maxPrice, 10);
+
+        if (matchesText && matchesPrice) {
+          card.style.display = "";
+          hasVisibleCards = true;
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      section.style.display = hasVisibleCards ? "" : "none";
+    });
+  }
 
   if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      const query = e.target.value.toLowerCase().trim();
+    searchInput.addEventListener("input", filtrarProductos);
+  }
 
-      document.querySelectorAll(".catalog").forEach((section) => {
-        let hasVisibleCards = false;
-
-        // Si el usuario escribió algo, activamos el modo de búsqueda fluida
-        if (query.length > 0) {
-          section.classList.add("is-searching");
-        } else {
-          section.classList.remove("is-searching");
-        }
-
-        // Recorremos las tarjetas dentro de esta sección
-        section.querySelectorAll(".card").forEach((card) => {
-          const title = card.querySelector("h3") ? card.querySelector("h3").innerText.toLowerCase() : "";
-          const price = card.querySelector(".price") ? card.querySelector(".price").innerText.toLowerCase() : "";
-          const desc = card.getAttribute("data-desc") ? card.getAttribute("data-desc").toLowerCase() : "";
-
-          // Verificamos si la búsqueda coincide con el título, precio o descripción
-          const matches = title.includes(query) || price.includes(query) || desc.includes(query);
-
-          if (matches) {
-            card.style.display = ""; // Muestra la tarjeta
-            hasVisibleCards = true;
-          } else {
-            card.style.display = "none"; // Oculta la tarjeta
-          }
-        });
-
-        // Oculta la sección completa si ninguna tarjeta coincide con el filtro
-        section.style.display = hasVisibleCards ? "" : "none";
-      });
-    });
+  if (priceFilter) {
+    priceFilter.addEventListener("change", filtrarProductos);
   }
 });
