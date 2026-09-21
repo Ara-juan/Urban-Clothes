@@ -74,7 +74,7 @@ body {
 
 /* Sección Acerca */
 .about {
-  padding: 60px;
+  padding: 60px 20px;
 }
 
 .about-content {
@@ -85,8 +85,9 @@ body {
 }
 
 .about-logo img {
-  width: 450px;
-  height: 450px;
+  width: 100%;
+  max-width: 450px;
+  height: auto;
   object-fit: contain;
   display: block;
 }
@@ -128,4 +129,38 @@ body {
 
 .socials a:hover {
   text-decoration: underline;
+}
+
+/* Ajustes Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .about {
+    padding: 30px 15px;
+  }
+
+  .about-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .about-logo img {
+    max-width: 250px;
+    margin: 0 auto;
+  }
+
+  .about-text h2 {
+    font-size: 1.5rem;
+  }
 }
