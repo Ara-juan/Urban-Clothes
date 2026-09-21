@@ -424,3 +424,31 @@ body {
     justify-content: center;
   }
 }
+
+/* 
+   GRID DE CATÁLOGO GENERAL (3 PRODUCTOS POR FILA)
+   */
+.catalog-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.catalog-grid .card {
+  width: calc(33.333% - 14px); /* 3 columnas exactas */
+  min-width: 260px;
+}
+
+@media (max-width: 768px) {
+  .catalog-grid .card {
+    width: calc(50% - 10px); /* 2 columnas en tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .catalog-grid .card {
+    width: 100%; /* 1 columna en móviles */
+  }
+}
