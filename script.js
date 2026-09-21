@@ -67,16 +67,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- LÓGICA DE BÚSQUEDA LOCAL EN TIEMPO REAL ---
+// --- LÓGICA DE BÚSQUEDA LOCAL EN TIEMPO REAL ---
   const searchInput = document.querySelector(".search-bar input");
 
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       const query = e.target.value.toLowerCase().trim();
 
-      // Recorremos cada sección del catálogo
       document.querySelectorAll(".catalog").forEach((section) => {
         let hasVisibleCards = false;
+
+        // Si el usuario escribió algo, activamos el modo de búsqueda fluida
+        if (query.length > 0) {
+          section.classList.add("is-searching");
+        } else {
+          section.classList.remove("is-searching");
+        }
 
         // Recorremos las tarjetas dentro de esta sección
         section.querySelectorAll(".card").forEach((card) => {

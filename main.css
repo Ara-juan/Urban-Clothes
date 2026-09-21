@@ -452,3 +452,19 @@ body {
     width: 100%; /* 1 columna en móviles */
   }
 }
+
+/* 
+   ESTILO PARA BÚSQUEDA ACTIVA (ACUMULA PRODUCTOS EN FILAS DE A 3)
+   */
+.catalog.is-searching .products {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 20px !important;
+  justify-content: flex-start !important;
+  overflow-x: visible !important;
+}
+
+.catalog.is-searching .products .card {
+  width: calc(33.333% - 14px) !important;
+  min-width: 260px;
+}
