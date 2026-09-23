@@ -19,6 +19,7 @@ async function cargarDatosPerfil() {
     const respuesta = await fetch(`${API_URL}/perfil`, {
       method: 'GET',
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       }
     });
@@ -29,6 +30,11 @@ async function cargarDatosPerfil() {
       document.getElementById('perfilEmail').value = usuario.email || '';
       document.getElementById('perfilTelefono').value = usuario.telefono || '';
       document.getElementById('perfilDireccion').value = usuario.direccion || '';
+    } else if (respuesta.status === 401 || respuesta.status === 403) {
+      // Token vencido o inválido
+      localStorage.removeItem('urban_token');
+      localStorage.removeItem('urban_user');
+      window.location.href = 'login.html';
     } else {
       mostrarMensajePerfil('No se pudieron cargar los datos del perfil.', true);
     }
@@ -56,7 +62,6 @@ async function actualizarPerfil(event) {
   const telefono = document.getElementById('perfilTelefono').value;
   const direccion = document.getElementById('perfilDireccion').value;
 
-  // Validación de contraseña
   if (nuevaContrasena && !contrasenaActual) {
     mostrarMensajePerfil('Debes ingresar tu contraseña actual para cambiarla.', true);
     return;
@@ -84,17 +89,19 @@ async function actualizarPerfil(event) {
     if (respuesta.ok) {
       mostrarMensajePerfil(resultado.mensaje, false);
       
-      // Limpiar campos de contraseña
       document.getElementById('contrasenaActual').value = '';
       document.getElementById('nuevaContrasena').value = '';
 
-      // Actualizar localStorage si hubo cambios
       if (resultado.usuario) {
         const usuarioLocal = JSON.parse(localStorage.getItem('urban_user') || '{}');
         usuarioLocal.telefono = resultado.usuario.telefono;
         usuarioLocal.direccion = resultado.usuario.direccion;
         localStorage.setItem('urban_user', JSON.stringify(usuarioLocal));
       }
+    } else if (respuesta.status === 401 || respuesta.status === 403) {
+      localStorage.removeItem('urban_token');
+      localStorage.removeItem('urban_user');
+      window.location.href = 'login.html';
     } else {
       mostrarMensajePerfil(resultado.error || 'Error al actualizar el perfil', true);
     }

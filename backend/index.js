@@ -8,7 +8,13 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 
-app.use(cors());
+// Configuración amplia de CORS para despliegues (Netlify, Vercel, Render)
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 const SALT_ROUNDS = 10;
@@ -33,11 +39,11 @@ const verificarToken = (req, res, next) => {
     req.usuario = verificado;
     next();
   } catch (error) {
-    res.status(403).json({ error: "Token inválido o expirado." });
+    return res.status(403).json({ error: "Token inválido o expirado." });
   }
 };
 
-// 1. REGISTRO DE USUARIOS
+// REGISTRO DE USUARIOS
 app.post('/api/usuarios/registro', async (req, res) => {
   const { nombre, email, contrasena, telefono, direccion } = req.body;
 
@@ -48,7 +54,7 @@ app.post('/api/usuarios/registro', async (req, res) => {
   const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ 
-      error: "El correo electrónico no tiene un formato válido (ejemplo: usuario@dominio.com)." 
+      error: "El correo electrónico no tiene un formato válido." 
     });
   }
 
@@ -75,13 +81,13 @@ app.post('/api/usuarios/registro', async (req, res) => {
     );
 
     res.status(201).json({
-      mensaje: "Usuario registrado con éxito en Urban Clothes",
+      mensaje: "Usuario registrado con éxito",
       usuario: nuevoUsuario.rows[0]
     });
   } catch (error) {
     if (error.code === '23505') {
       return res.status(400).json({ 
-        error: "El nombre de usuario o el correo electrónico ya se encuentran en uso." 
+        error: "El correo electrónico ya se encuentra registrado." 
       });
     }
     
@@ -89,7 +95,7 @@ app.post('/api/usuarios/registro', async (req, res) => {
   }
 });
 
-// 2. INICIO DE SESIÓN
+// INICIO DE SESIÓN
 app.post('/api/usuarios/login', async (req, res) => {
   const { email, contrasena } = req.body;
 
@@ -125,7 +131,7 @@ app.post('/api/usuarios/login', async (req, res) => {
     );
 
     res.json({
-      mensaje: "Inicio de sesión exitoso. Bienvenido a Urban Clothes",
+      mensaje: "Inicio de sesión exitoso.",
       token,
       usuario: {
         id: usuarioEncontrado.id_usuario,
@@ -139,7 +145,7 @@ app.post('/api/usuarios/login', async (req, res) => {
   }
 });
 
-// 3. OBTENER PERFIL DE USUARIO
+// OBTENER PERFIL
 app.get('/api/usuarios/perfil', verificarToken, async (req, res) => {
   try {
     const usuario = await pool.query(
@@ -157,7 +163,7 @@ app.get('/api/usuarios/perfil', verificarToken, async (req, res) => {
   }
 });
 
-// 4. ACTUALIZAR PERFIL Y CAMBIAR CONTRASEÑA
+// ACTUALIZAR PERFIL
 app.put('/api/usuarios/perfil', verificarToken, async (req, res) => {
   const userId = req.usuario.id;
   const { contrasenaActual, nuevaContrasena, telefono, direccion } = req.body;
@@ -167,7 +173,6 @@ app.put('/api/usuarios/perfil', verificarToken, async (req, res) => {
   }
 
   try {
-    // Si el usuario ingresó una nueva contraseña, debemos validar la actual
     let nuevoPasswordHash = null;
 
     if (nuevaContrasena) {
@@ -205,12 +210,11 @@ app.put('/api/usuarios/perfil', verificarToken, async (req, res) => {
       usuario: usuarioActualizado.rows[0]
     });
   } catch (error) {
-    console.error('Error al actualizar perfil:', error);
     res.status(500).json({ error: "Error interno al actualizar la información." });
   }
 });
 
-// 5. ELIMINAR CUENTA
+// ELIMINAR CUENTA
 app.delete('/api/usuarios/:id', verificarToken, async (req, res) => {
   const { id } = req.params;
 

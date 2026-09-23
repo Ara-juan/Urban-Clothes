@@ -9,13 +9,34 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
 
   <!-- Estilos Personalizados -->
-  <link rel="stylesheet" href="login.css">
   <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="login.css">
+
+  <style>
+    /* Ajustes específicos para evitar que la navbar solape el formulario */
+    body {
+      display: block !important;
+      min-height: 100vh;
+      padding-top: 100px;
+    }
+    .profile-wrapper {
+      max-width: 480px;
+      margin: 0 auto 50px auto;
+      padding: 0 15px;
+    }
+    .profile-card {
+      background: rgba(0, 0, 0, 0.85);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
 </head>
 <body>
 
   <!-- Barra de navegación -->
-  <header class="w-100 position-fixed top-0 start-0 z-3">
+  <header style="position: fixed; top: 0; width: 100%; z-index: 1000;">
     <nav class="navbar">
       <div class="logo">
         <a href="acerca de.html"><img src="assets/logo.png" alt="Logo Americanoshh"></a>
@@ -27,61 +48,61 @@
         <li><a href="unisex.html">Unisex</a></li>
         <li><a href="main.html">Colecciones</a></li>
         <li><a href="acerca de.html">Acerca de</a></li>
-        <li><a href="perfil.html" class="active">Perfil</a></li>
+        <li><a href="perfil.html" class="fw-bold text-info">Perfil</a></li>
       </ul>
       <div id="userMenuNav" class="d-flex align-items-center ms-3"></div>
     </nav>
   </header>
 
-  <!-- Contenedor del Formulario de Perfil -->
-  <main class="login-container mt-5 pt-5">
-    <div class="form-box">
-      <h2>Mi Perfil</h2>
-      <p class="text-secondary small mb-3">Actualiza tus datos y contraseña de acceso</p>
+  <!-- Formulario de Perfil -->
+  <main class="profile-wrapper">
+    <div class="profile-card">
+      <h2 class="text-center text-white mb-2">Mi Perfil</h2>
+      <p class="text-center text-secondary small mb-4">Gestiona tu información personal y de seguridad</p>
 
       <form id="perfilForm" onsubmit="actualizarPerfil(event)">
-        <!-- Información básica (Sólo Lectura) -->
-        <div class="mb-2 text-start">
-          <label class="form-label text-white-50 small mb-0">Nombre Completo</label>
-          <input type="text" id="perfilNombre" readonly class="form-control bg-dark text-white border-secondary">
+        <!-- Información básica -->
+        <div class="mb-3 text-start">
+          <label class="form-label text-white-50 small mb-1">Nombre Completo</label>
+          <input type="text" id="perfilNombre" readonly class="form-control bg-dark text-white border-secondary opacity-75">
         </div>
 
         <div class="mb-3 text-start">
-          <label class="form-label text-white-50 small mb-0">Correo Electrónico</label>
-          <input type="email" id="perfilEmail" readonly class="form-control bg-dark text-white border-secondary">
+          <label class="form-label text-white-50 small mb-1">Correo Electrónico</label>
+          <input type="email" id="perfilEmail" readonly class="form-control bg-dark text-white border-secondary opacity-75">
         </div>
 
-        <hr class="border-secondary my-3">
+        <hr class="border-secondary my-4">
 
         <!-- Datos Opcionales -->
-        <h3 class="h6 text-info text-start">Datos de Envío (Opcionales)</h3>
+        <h3 class="h6 text-info text-start mb-3">Datos de Envío (Opcionales)</h3>
         
-        <div class="mb-2 text-start">
-          <label for="perfilTelefono" class="form-label small mb-0">Teléfono</label>
-          <input type="tel" id="perfilTelefono" placeholder="Ingresa tu teléfono (Opcional)" pattern="^[0-9]*$">
+        <div class="mb-3 text-start">
+          <label for="perfilTelefono" class="form-label text-white small mb-1">Teléfono</label>
+          <input type="tel" id="perfilTelefono" class="form-control bg-dark text-white border-secondary" placeholder="Ingresa tu teléfono (Opcional)" pattern="^[0-9]*$">
         </div>
 
         <div class="mb-3 text-start">
-          <label for="perfilDireccion" class="form-label small mb-0">Dirección</label>
-          <input type="text" id="perfilDireccion" placeholder="Ingresa tu dirección (Opcional)">
+          <label for="perfilDireccion" class="form-label text-white small mb-1">Dirección</label>
+          <input type="text" id="perfilDireccion" class="form-control bg-dark text-white border-secondary" placeholder="Ingresa tu dirección (Opcional)">
         </div>
 
-        <hr class="border-secondary my-3">
+        <hr class="border-secondary my-4">
 
         <!-- Cambio de Contraseña -->
-        <h3 class="h6 text-info text-start">Cambiar Contraseña</h3>
+        <h3 class="h6 text-info text-start mb-3">Cambiar Contraseña</h3>
 
-        <div class="mb-2 text-start">
-          <label for="contrasenaActual" class="form-label small mb-0">Contraseña Actual</label>
-          <input type="password" id="contrasenaActual" placeholder="Requerida solo si vas a cambiarla" minlength="8">
+        <div class="mb-3 text-start">
+          <label for="contrasenaActual" class="form-label text-white small mb-1">Contraseña Actual</label>
+          <input type="password" id="contrasenaActual" class="form-control bg-dark text-white border-secondary" placeholder="Requerida solo si vas a cambiarla" minlength="8">
         </div>
 
         <div class="mb-3 text-start">
-          <label for="nuevaContrasena" class="form-label small mb-0">Nueva Contraseña</label>
-          <input type="password" id="nuevaContrasena" placeholder="Mínimo 8 caracteres" minlength="8">
+          <label for="nuevaContrasena" class="form-label text-white small mb-1">Nueva Contraseña</label>
+          <input type="password" id="nuevaContrasena" class="form-control bg-dark text-white border-secondary" placeholder="Mínimo 8 caracteres" minlength="8">
         </div>
 
-        <button type="submit" class="btn w-100 mt-3">Guardar Cambios</button>
+        <button type="submit" class="btn btn-primary w-100 py-2 mt-3 fw-bold">Guardar Cambios</button>
       </form>
 
       <!-- Mensajes dinámicos -->
