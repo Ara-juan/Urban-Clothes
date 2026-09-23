@@ -1,4 +1,4 @@
-// auth.js - Manejo de sesión (Con soporte para invitados)
+// auth.js - Manejo global de la sesión de usuario
 
 document.addEventListener('DOMContentLoaded', () => {
   verificarSesion();
@@ -10,7 +10,7 @@ function verificarSesion() {
 
   const contenedorUser = document.getElementById('userMenuNav');
 
-  // SI HAY SESIÓN ACTIVA (Usuario registrado)
+  // SI HAY SESIÓN ACTIVA
   if (token && usuarioRaw) {
     try {
       const usuario = JSON.parse(usuarioRaw);
@@ -18,6 +18,7 @@ function verificarSesion() {
       if (contenedorUser) {
         contenedorUser.innerHTML = `
           <span class="text-white small me-2">Hola, <strong>${usuario.nombre || usuario.email}</strong></span>
+          <a href="perfil.html" class="btn btn-outline-info btn-sm me-2">Perfil</a>
           <button type="button" class="btn btn-outline-light btn-sm" onclick="cerrarSesion()">Salir</button>
         `;
       }
@@ -29,7 +30,7 @@ function verificarSesion() {
     }
   }
 
-  // SI NO HAY SESIÓN (Invitado)
+  // SI ES UN INVITADO (NO LOGUEADO)
   if (contenedorUser) {
     contenedorUser.innerHTML = `
       <a href="login.html" class="btn btn-primary btn-sm">Iniciar Sesión / Registrarse</a>

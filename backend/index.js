@@ -139,40 +139,78 @@ app.post('/api/usuarios/login', async (req, res) => {
   }
 });
 
-// 3. ACTUALIZAR PERFIL
-app.put('/api/usuarios/:id', verificarToken, async (req, res) => {
-  const { id } = req.params;
-  const { nombre, telefono, direccion } = req.body;
+// 3. OBTENER PERFIL DE USUARIO
+app.get('/api/usuarios/perfil', verificarToken, async (req, res) => {
+  try {
+    const usuario = await pool.query(
+      'SELECT id_usuario, nombre, email, telefono, direccion, rol FROM usuarios WHERE id_usuario = $1',
+      [req.usuario.id]
+    );
 
-  if (req.usuario.id !== parseInt(id, 10) && req.usuario.rol !== 'admin') {
-    return res.status(403).json({ error: "No tienes permiso para modificar este perfil." });
+    if (usuario.rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado." });
+    }
+
+    res.json(usuario.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: "Error al consultar el perfil." });
+  }
+});
+
+// 4. ACTUALIZAR PERFIL Y CAMBIAR CONTRASEÑA
+app.put('/api/usuarios/perfil', verificarToken, async (req, res) => {
+  const userId = req.usuario.id;
+  const { contrasenaActual, nuevaContrasena, telefono, direccion } = req.body;
+
+  if (telefono && !/^\d+$/.test(telefono)) {
+    return res.status(400).json({ error: "El teléfono solo debe contener dígitos numéricos." });
   }
 
   try {
+    // Si el usuario ingresó una nueva contraseña, debemos validar la actual
+    let nuevoPasswordHash = null;
+
+    if (nuevaContrasena) {
+      if (!contrasenaActual) {
+        return res.status(400).json({ error: "Debes ingresar tu contraseña actual para establecer una nueva." });
+      }
+
+      if (nuevaContrasena.length < 8) {
+        return res.status(400).json({ error: "La nueva contraseña debe tener al menos 8 caracteres." });
+      }
+
+      const consultaUsuario = await pool.query('SELECT contrasena FROM usuarios WHERE id_usuario = $1', [userId]);
+      const passActualHash = consultaUsuario.rows[0].contrasena;
+
+      const esValida = await bcrypt.compare(contrasenaActual, passActualHash);
+      if (!esValida) {
+        return res.status(401).json({ error: "La contraseña actual es incorrecta." });
+      }
+
+      nuevoPasswordHash = await bcrypt.hash(nuevaContrasena, SALT_ROUNDS);
+    }
+
     const usuarioActualizado = await pool.query(
       `UPDATE usuarios 
-       SET nombre = COALESCE($1, nombre), 
+       SET contrasena = COALESCE($1, contrasena), 
            telefono = COALESCE($2, telefono), 
            direccion = COALESCE($3, direccion) 
        WHERE id_usuario = $4 
        RETURNING id_usuario, nombre, email, telefono, direccion`,
-      [nombre, telefono, direccion, id]
+      [nuevoPasswordHash, telefono !== undefined ? telefono : null, direccion !== undefined ? direccion : null, userId]
     );
 
-    if (usuarioActualizado.rows.length === 0) {
-      return res.status(404).json({ error: "Usuario no encontrado para actualizar." });
-    }
-
     res.json({
-      mensaje: "Perfil actualizado correctamente",
+      mensaje: "Datos actualizados correctamente.",
       usuario: usuarioActualizado.rows[0]
     });
   } catch (error) {
-    res.status(500).json({ error: "Error al actualizar los datos." });
+    console.error('Error al actualizar perfil:', error);
+    res.status(500).json({ error: "Error interno al actualizar la información." });
   }
 });
 
-// 4. ELIMINAR CUENTA
+// 5. ELIMINAR CUENTA
 app.delete('/api/usuarios/:id', verificarToken, async (req, res) => {
   const { id } = req.params;
 
