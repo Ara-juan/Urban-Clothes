@@ -1,9 +1,9 @@
 /* ==========================================
-   ESTILOS GENERALES Y BASE
+   ESTILOS GENERALES Y BASE (ESCRITORIO)
    ========================================== */
 body {
   margin: 0;
-  padding-top: 110px; /* Evita que la navbar fija solape el contenido */
+  padding-top: 110px; /* Evita que la navbar fija solape el contenido en escritorio */
   font-family: 'Arial', sans-serif;
   background: url('assets/fondo.webp') no-repeat center center fixed;
   background-size: cover;
@@ -164,26 +164,58 @@ hr.profile-divider {
 }
 
 /* ==========================================
-   RESPONSIVE MÓVIL
+   RESPONSIVE MÓVIL (AJUSTES EXCLUSIVOS PARA MÓVIL)
    ========================================== */
 @media (max-width: 768px) {
   body {
-    padding-top: 150px;
+    padding-top: 20px; /* Elimina la necesidad de padding grande arriba */
+  }
+
+  header {
+    position: relative; /* En móvil la barra fluye con la página sin solapar nada */
+    margin-bottom: 25px;
   }
 
   .navbar {
     flex-direction: column;
-    gap: 15px;
-    padding: 15px;
+    gap: 12px;
+    padding: 15px 10px;
+  }
+
+  .logo img {
+    width: 100px;
   }
 
   .nav-links {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
+  }
+
+  .nav-links li a {
+    font-size: 14px;
+  }
+
+  #userMenuNav {
+    margin-left: 0 !important;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .profile-wrapper {
+    margin-bottom: 40px;
+    padding: 0 10px;
   }
 
   .profile-card {
-    padding: 25px 20px;
+    padding: 20px 16px;
+  }
+
+  .profile-card h2 {
+    font-size: 20px;
+  }
+
+  .section-title {
+    font-size: 13px;
   }
 }
