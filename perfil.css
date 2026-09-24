@@ -168,11 +168,13 @@ hr.profile-divider {
    ========================================== */
 @media (max-width: 768px) {
   body {
-    padding-top: 20px; /* Elimina la necesidad de padding grande arriba */
+    padding-top: 0 !important; /* Elimina completamente el espacio superior sobrante */
   }
 
   header {
-    position: relative; /* En móvil la barra fluye con la página sin solapar nada */
+    position: relative;
+    top: 0;
+    margin-top: 0;
     margin-bottom: 25px;
   }
 
