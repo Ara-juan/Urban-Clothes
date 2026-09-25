@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Productos - Americanoshh</title>
+
+  <!-- Bootstrap CSS 5.3.8 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+  
+  <!-- Estilos base -->
+  <link rel="stylesheet" href="perfil.css">
+</head>
+<body style="padding-top: 120px;">
+
+  <!-- Barra de navegación fija -->
+  <header style="position: fixed; top: 0; width: 100%; z-index: 1000;">
+    <nav class="navbar">
+      <div class="logo">
+        <a href="catalogo.html"><img src="assets/logo.png" alt="Logo Americanoshh"></a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="catalogo.html">Ver Catálogo</a></li>
+        <li><a href="perfil.html">Mi Perfil</a></li>
+      </ul>
+      <div id="userMenuNav" class="d-flex align-items-center ms-3"></div>
+    </nav>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="container my-4" style="max-width: 1000px;">
+    
+    <!-- Formulario para Crear / Editar Producto -->
+    <div class="profile-card mb-5">
+      <h2 class="text-center" id="formTitulo">Agregar Nuevo Producto</h2>
+      <p class="text-center subtitle">Impresión bajo demanda — Sube o edita la información de la prenda</p>
+
+      <form id="productoForm" onsubmit="guardarProducto(event)">
+        <input type="hidden" id="prodId">
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Título de la prenda *</label>
+            <input type="text" id="prodTitulo" class="form-control" placeholder="Ej: Camiseta Urban Skull" required>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Precio ($ COP) *</label>
+            <input type="number" id="prodPrecio" class="form-control" placeholder="Ej: 60000" min="0" step="500" required>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">URL de la Imagen *</label>
+          <input type="url" id="prodImagen" class="form-control" placeholder="https://tu-storage.com/imagen.webp" required>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Categoría *</label>
+            <select id="prodCategoria" class="form-control bg-dark text-white border-secondary" required>
+              <option value="">Selecciona categoría</option>
+              <option value="hombre">Hombre</option>
+              <option value="mujer">Mujer</option>
+              <option value="unisex">Unisex</option>
+            </select>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Estado del Producto *</label>
+            <select id="prodEstado" class="form-control bg-dark text-white border-secondary" required>
+              <option value="activo">Activo (Visible en el catálogo)</option>
+              <option value="inactivo">Inactivo (Oculto)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Tallas disponibles (separadas por comas)</label>
+          <input type="text" id="prodTallas" class="form-control" value="XS, S, M, L, XL" placeholder="XS, S, M, L, XL">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Descripción corta o historia de la prenda</label>
+          <textarea id="prodDesc" class="form-control" rows="3" placeholder="Describe el concepto o diseño de la prenda..."></textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" id="btnGuardar" class="btn-save">Publicar Prenda</button>
+          <button type="button" id="btnCancelar" class="btn btn-outline-secondary w-50" style="display: none;" onclick="resetearFormulario()">Cancelar Edición</button>
+        </div>
+      </form>
+
+      <!-- Mensajes dinámicos -->
+      <div id="mensajeAdmin" class="mt-3 text-center fw-bold" style="display: none;"></div>
+    </div>
+
+    <!-- Lista / Tabla de Productos Existentes -->
+    <div class="profile-card">
+      <h3 class="section-title">Productos Registrados</h3>
+      <p class="text-white-50 small mb-3">Gestiona el estado o modifica los precios y fotos de tus prendas.</p>
+
+      <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Imagen</th>
+              <th>Título</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProductosBody">
+            <tr>
+              <td colspan="6" class="text-center text-muted">Cargando productos...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="auth.js"></script>
+  <script src="admin-productos.js"></script>
+</body>
+</html>

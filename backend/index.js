@@ -43,6 +43,15 @@ const verificarToken = (req, res, next) => {
   }
 };
 
+// MIDDLEWARE PARA VERIFICAR ROL DE ADMINISTRADOR (Acepta 'ADMINISTRADOR' o 'admin')
+const verificarAdmin = (req, res, next) => {
+  if (req.usuario && (req.usuario.rol === 'ADMINISTRADOR' || req.usuario.rol === 'admin')) {
+    next();
+  } else {
+    return res.status(403).json({ error: "Acceso denegado. Se requieren permisos de administrador." });
+  }
+};
+
 // REGISTRO DE USUARIOS
 app.post('/api/usuarios/registro', async (req, res) => {
   const { nombre, email, contrasena, telefono, direccion } = req.body;
@@ -218,7 +227,8 @@ app.put('/api/usuarios/perfil', verificarToken, async (req, res) => {
 app.delete('/api/usuarios/:id', verificarToken, async (req, res) => {
   const { id } = req.params;
 
-  if (req.usuario.id !== parseInt(id, 10) && req.usuario.rol !== 'admin') {
+  const esAdmin = req.usuario.rol === 'ADMINISTRADOR' || req.usuario.rol === 'admin';
+  if (req.usuario.id !== parseInt(id, 10) && !esAdmin) {
     return res.status(403).json({ error: "No tienes permiso para eliminar esta cuenta." });
   }
 
@@ -232,6 +242,140 @@ app.delete('/api/usuarios/:id', verificarToken, async (req, res) => {
     res.json({ mensaje: "Usuario eliminado correctamente del sistema." });
   } catch (error) {
     res.status(500).json({ error: "Error al intentar eliminar el usuario." });
+  }
+});
+
+// ==========================================
+// ENDPOINTS DE PRODUCTOS (CRUD)
+// ==========================================
+
+// 1. OBTENER PRODUCTOS ACTIVOS (Público para el catálogo)
+app.get('/api/productos', async (req, res) => {
+  const { categoria } = req.query;
+
+  try {
+    let consulta = "SELECT * FROM productos WHERE estado = 'activo'";
+    const params = [];
+
+    if (categoria) {
+      consulta += " AND categoria = $1";
+      params.push(categoria);
+    }
+
+    consulta += " ORDER BY id_producto DESC";
+
+    const resultado = await pool.query(consulta, params);
+    res.json(resultado.rows);
+  } catch (error) {
+    console.error("Error al consultar productos:", error);
+    res.status(500).json({ error: "Error al consultar el catálogo de productos." });
+  }
+});
+
+// 2. OBTENER UN PRODUCTO POR ID (Público)
+app.get('/api/productos/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const resultado = await pool.query("SELECT * FROM productos WHERE id_producto = $1", [id]);
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ error: "Producto no encontrado." });
+    }
+
+    res.json(resultado.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener la información del producto." });
+  }
+});
+
+// 3. CREAR NUEVO PRODUCTO (Solo Administradores)
+app.post('/api/productos', verificarToken, verificarAdmin, async (req, res) => {
+  const { titulo, descripcion, precio, imagen_url, categoria, tallas } = req.body;
+
+  if (!titulo || !precio || !imagen_url || !categoria) {
+    return res.status(400).json({ 
+      error: "Título, precio, URL de imagen y categoría son obligatorios." 
+    });
+  }
+
+  try {
+    const nuevoProducto = await pool.query(
+      `INSERT INTO productos (titulo, descripcion, precio, imagen_url, categoria, tallas, estado)
+       VALUES ($1, $2, $3, $4, $5, $6, 'activo')
+       RETURNING *`,
+      [
+        titulo, 
+        descripcion || null, 
+        precio, 
+        imagen_url, 
+        categoria, 
+        tallas || ['XS', 'S', 'M', 'L', 'XL']
+      ]
+    );
+
+    res.status(201).json({
+      mensaje: "Producto creado exitosamente.",
+      producto: nuevoProducto.rows[0]
+    });
+  } catch (error) {
+    console.error("Error al registrar producto:", error);
+    res.status(500).json({ error: "Error interno al guardar el producto." });
+  }
+});
+
+// 4. ACTUALIZAR PRODUCTO O CAMBIAR SU ESTADO (Solo Administradores)
+app.put('/api/productos/:id', verificarToken, verificarAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { titulo, descripcion, precio, imagen_url, categoria, tallas, estado } = req.body;
+
+  if (estado && !['activo', 'inactivo'].includes(estado)) {
+    return res.status(400).json({ error: "El estado debe ser 'activo' o 'inactivo'." });
+  }
+
+  try {
+    const productoActualizado = await pool.query(
+      `UPDATE productos
+       SET titulo = COALESCE($1, titulo),
+           descripcion = COALESCE($2, descripcion),
+           precio = COALESCE($3, precio),
+           imagen_url = COALESCE($4, imagen_url),
+           categoria = COALESCE($5, categoria),
+           tallas = COALESCE($6, tallas),
+           estado = COALESCE($7, estado)
+       WHERE id_producto = $8
+       RETURNING *`,
+      [titulo, descripcion, precio, imagen_url, categoria, tallas, estado, id]
+    );
+
+    if (productoActualizado.rows.length === 0) {
+      return res.status(404).json({ error: "Producto no encontrado para actualizar." });
+    }
+
+    res.json({
+      mensaje: "Producto actualizado correctamente.",
+      producto: productoActualizado.rows[0]
+    });
+  } catch (error) {
+    console.error("Error al actualizar producto:", error);
+    res.status(500).json({ error: "Error al actualizar la información del producto." });
+  }
+});
+
+// 5. ELIMINAR PRODUCTO PERMANENTEMENTE (Solo Administradores)
+app.delete('/api/productos/:id', verificarToken, verificarAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const resultado = await pool.query("DELETE FROM productos WHERE id_producto = $1", [id]);
+
+    if (resultado.rowCount === 0) {
+      return res.status(404).json({ error: "Producto no encontrado para eliminar." });
+    }
+
+    res.json({ mensaje: "Producto eliminado definitivamente del sistema." });
+  } catch (error) {
+    res.status(500).json({ error: "Error al intentar eliminar el producto." });
   }
 });
 

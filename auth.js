@@ -14,10 +14,18 @@ function verificarSesion() {
   if (token && usuarioRaw) {
     try {
       const usuario = JSON.parse(usuarioRaw);
-      
+
+      // Comprobamos si el usuario es administrador (acepta 'ADMINISTRADOR' o 'admin')
+      const esAdmin = usuario.rol === 'ADMINISTRADOR' || usuario.rol === 'admin';
+
+      const botonAdmin = esAdmin 
+        ? `<a href="admin-productos.html" class="btn btn-warning btn-sm me-2 fw-bold">⚙️ Admin</a>` 
+        : '';
+
       if (contenedorUser) {
         contenedorUser.innerHTML = `
           <span class="text-white small me-2">Hola, <strong>${usuario.nombre || usuario.email}</strong></span>
+          ${botonAdmin}
           <a href="perfil.html" class="btn btn-outline-info btn-sm me-2">Perfil</a>
           <button type="button" class="btn btn-outline-light btn-sm" onclick="cerrarSesion()">Salir</button>
         `;
