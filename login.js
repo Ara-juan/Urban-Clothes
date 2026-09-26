@@ -123,7 +123,7 @@ async function manejarLogin(event) {
 
       // Redirigir al catálogo principal tras 1 segundo
       setTimeout(() => {
-        window.location.href = 'main.html';
+        window.location.href = 'colecciones.html';
       }, 1000);
     } else {
       mostrarMensaje(resultado.error || 'Credenciales incorrectas', true);
