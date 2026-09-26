@@ -2,14 +2,14 @@ const API_BASE_URL = 'https://urban-clothes-slc0.onrender.com/api/productos';
 
 // Configuración de Supabase para subida de archivos
 const SUPABASE_URL = 'https://duuuqlbabwmidigdeybd.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1dXVxbGJhYndtaWRpZ2RleWJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMzk2MTUsImV4cCI6MjA1NjzgMTYxNX0.gY-Qv_A-s8lE2-w5K_G2k0vB8K0vB8K0vB8K0vB8K0v'; // Tu clave pública anon
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1dXVxbGJhYndtaWRpZ2RleWJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NDUzMTgsImV4cCI6MjEwNTIyMTMxOH0.fKwB40mMMjrF1pCgGrhKHmHqQBvpvFGyZpBYF7uOFVY';
+
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.addEventListener('DOMContentLoaded', () => {
   verificarPermisoAdmin();
   cargarListaProductos();
 
-  // Escuchar cuando el cliente seleccione un archivo local
   const fileInput = document.getElementById('fileImagen');
   if (fileInput) {
     fileInput.addEventListener('change', manejarSeleccionImagen);
@@ -38,9 +38,6 @@ function verificarPermisoAdmin() {
   }
 }
 
-/**
- * Muestra una vista previa local de la imagen seleccionada por el cliente
- */
 function manejarSeleccionImagen(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -56,7 +53,7 @@ function manejarSeleccionImagen(e) {
 }
 
 /**
- * Suba el archivo adjunto al bucket 'productos' de Supabase Storage
+ * Sube la imagen al bucket 'Imagenes' en Supabase Storage
  */
 async function subirImagenASupabase(file) {
   const fileExt = file.name.split('.').pop();
@@ -65,25 +62,24 @@ async function subirImagenASupabase(file) {
 
   const { data, error } = await supabaseClient
     .storage
-    .from('productos')
-    .upload(filePath, file);
+    .from('Imagenes')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
 
   if (error) {
     throw new Error('Error al subir la imagen: ' + error.message);
   }
 
-  // Obtener la URL pública del archivo subido
   const { data: publicUrlData } = supabaseClient
     .storage
-    .from('productos')
+    .from('Imagenes')
     .getPublicUrl(filePath);
 
   return publicUrlData.publicUrl;
 }
 
-/**
- * Obtiene todos los productos desde la base de datos
- */
 async function cargarListaProductos() {
   const tbody = document.getElementById('tablaProductosBody');
 
@@ -94,7 +90,7 @@ async function cargarListaProductos() {
     const productos = await respuesta.json();
 
     if (productos.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No hay prendas registradas aún en la base de datos. ¡Sube la primera arriba!</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No hay prendas registradas aún. ¡Sube la primera arriba!</td></tr>`;
       return;
     }
 
@@ -125,7 +121,7 @@ async function cargarListaProductos() {
     tbody.innerHTML = `
       <tr>
         <td colspan="6" class="text-center text-warning">
-          El servidor está conectando...
+          Conectando servidor...
           <button class="btn btn-sm btn-outline-light ms-2" onclick="cargarListaProductos()">Reintentar</button>
         </td>
       </tr>
@@ -133,9 +129,6 @@ async function cargarListaProductos() {
   }
 }
 
-/**
- * Procesa el envío del formulario
- */
 async function guardarProducto(event) {
   event.preventDefault();
   ocultarMensajeAdmin();
@@ -150,7 +143,6 @@ async function guardarProducto(event) {
   btnGuardar.textContent = 'Procesando...';
 
   try {
-    // Si el usuario seleccionó una imagen nueva desde su equipo, la subimos a Supabase Storage primero
     if (fileInput && fileInput.files.length > 0) {
       mostrarMensajeAdmin('Subiendo imagen a la nube...', false);
       imagenUrl = await subirImagenASupabase(fileInput.files[0]);
@@ -218,7 +210,6 @@ function prepararEdicion(prod) {
   document.getElementById('prodTallas').value = Array.isArray(prod.tallas) ? prod.tallas.join(', ') : '';
   document.getElementById('prodDesc').value = prod.descripcion || '';
 
-  // Vista previa de la foto existente
   const previewContainer = document.getElementById('previewContainer');
   const imgPreview = document.getElementById('imgPreview');
   imgPreview.src = prod.imagen_url;
