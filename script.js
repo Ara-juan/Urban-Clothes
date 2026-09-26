@@ -29,8 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarProductosPorCategoria('unisex', 'contenedorProductosUnisex');
   } else if (document.getElementById('contenedorProductosCatalogo')) {
     cargarProductosPorCategoria('', 'contenedorProductosCatalogo');
+  } else if (document.getElementById('contenedorColeccionHombre')) {
+    // Carga de las colecciones dinámicas para la página de Colecciones
+    cargarProductosPorCategoria('hombre', 'contenedorColeccionHombre');
+    cargarProductosPorCategoria('mujer', 'contenedorColeccionMujer');
+    cargarProductosPorCategoria('unisex', 'contenedorColeccionUnisex');
   } else {
-    // Si la página contiene tarjetas estáticas (ej. Colecciones/main.html)
     activarEventosModal();
   }
 
@@ -122,7 +126,7 @@ async function cargarProductosPorCategoria(categoria, idContenedor) {
       return;
     }
 
-    // Estructura idéntica de tarjetas HTML
+    // Estructura de tarjetas HTML
     contenedor.innerHTML = productos.map(prod => {
       const precioFormateado = `$${parseInt(prod.precio, 10).toLocaleString('es-CO')}`;
       const descripcion = prod.descripcion || 'Sin descripción disponible.';
