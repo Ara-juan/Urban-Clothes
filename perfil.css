@@ -168,7 +168,7 @@ hr.profile-divider {
    ========================================== */
 @media (max-width: 768px) {
   body {
-    padding-top: 0 !important; /* Elimina completamente el espacio superior sobrante */
+    padding-top: 0;
   }
 
   header {
@@ -191,7 +191,7 @@ hr.profile-divider {
   .nav-links {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
   }
 
   .nav-links li a {
@@ -199,9 +199,11 @@ hr.profile-divider {
   }
 
   #userMenuNav {
-    margin-left: 0 !important;
+    margin-left: 0;
     justify-content: center;
     width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .profile-wrapper {

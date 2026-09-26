@@ -371,14 +371,29 @@ body {
   }
 
   .modal-content {
-    padding: 20px;
-    max-height: 90vh;
+    padding: 30px 15px 40px 15px;
+    max-height: 85vh;
     overflow-y: auto;
+  }
+
+  .close-modal {
+    top: 8px;
+    right: 14px;
+    z-index: 10;
+    font-size: 30px;
+    background: rgba(0, 0, 0, 0.6);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .modal-body {
     flex-direction: column;
     gap: 20px;
+    padding-top: 10px;
   }
 
   .modal-left,
