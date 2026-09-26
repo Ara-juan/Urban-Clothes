@@ -1,13 +1,21 @@
 const API_BASE_URL = 'https://urban-clothes-slc0.onrender.com/api/productos';
 
+// Configuración de Supabase para subida de archivos
+const SUPABASE_URL = 'https://duuuqlbabwmidigdeybd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1dXVxbGJhYndtaWRpZ2RleWJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMzk2MTUsImV4cCI6MjA1NjzgMTYxNX0.gY-Qv_A-s8lE2-w5K_G2k0vB8K0vB8K0vB8K0vB8K0v'; // Tu clave pública anon
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 document.addEventListener('DOMContentLoaded', () => {
   verificarPermisoAdmin();
   cargarListaProductos();
+
+  // Escuchar cuando el cliente seleccione un archivo local
+  const fileInput = document.getElementById('fileImagen');
+  if (fileInput) {
+    fileInput.addEventListener('change', manejarSeleccionImagen);
+  }
 });
 
-/**
- * Valida que exista sesión y que el usuario tenga rol de administrador ('ADMINISTRADOR' o 'admin')
- */
 function verificarPermisoAdmin() {
   const token = localStorage.getItem('urban_token');
   const usuarioRaw = localStorage.getItem('urban_user');
@@ -31,7 +39,50 @@ function verificarPermisoAdmin() {
 }
 
 /**
- * Obtiene todos los productos desde el servidor
+ * Muestra una vista previa local de la imagen seleccionada por el cliente
+ */
+function manejarSeleccionImagen(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const previewContainer = document.getElementById('previewContainer');
+    const imgPreview = document.getElementById('imgPreview');
+    imgPreview.src = event.target.result;
+    previewContainer.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+/**
+ * Suba el archivo adjunto al bucket 'productos' de Supabase Storage
+ */
+async function subirImagenASupabase(file) {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+  const filePath = `prendas/${fileName}`;
+
+  const { data, error } = await supabaseClient
+    .storage
+    .from('productos')
+    .upload(filePath, file);
+
+  if (error) {
+    throw new Error('Error al subir la imagen: ' + error.message);
+  }
+
+  // Obtener la URL pública del archivo subido
+  const { data: publicUrlData } = supabaseClient
+    .storage
+    .from('productos')
+    .getPublicUrl(filePath);
+
+  return publicUrlData.publicUrl;
+}
+
+/**
+ * Obtiene todos los productos desde la base de datos
  */
 async function cargarListaProductos() {
   const tbody = document.getElementById('tablaProductosBody');
@@ -43,7 +94,7 @@ async function cargarListaProductos() {
     const productos = await respuesta.json();
 
     if (productos.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No hay prendas registradas aún.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No hay prendas registradas aún en la base de datos. ¡Sube la primera arriba!</td></tr>`;
       return;
     }
 
@@ -71,12 +122,19 @@ async function cargarListaProductos() {
     `).join('');
   } catch (error) {
     console.error('Error al cargar la tabla:', error);
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error al conectar con el servidor.</td></tr>`;
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="text-center text-warning">
+          El servidor está conectando...
+          <button class="btn btn-sm btn-outline-light ms-2" onclick="cargarListaProductos()">Reintentar</button>
+        </td>
+      </tr>
+    `;
   }
 }
 
 /**
- * Procesa el envío del formulario (Crear nuevo o Actualizar existente)
+ * Procesa el envío del formulario
  */
 async function guardarProducto(event) {
   event.preventDefault();
@@ -84,25 +142,44 @@ async function guardarProducto(event) {
 
   const token = localStorage.getItem('urban_token');
   const prodId = document.getElementById('prodId').value;
+  const fileInput = document.getElementById('fileImagen');
+  let imagenUrl = document.getElementById('prodImagenUrl').value;
 
-  const tallasTexto = document.getElementById('prodTallas').value;
-  const tallasArray = tallasTexto.split(',').map(t => t.trim()).filter(t => t.length > 0);
-
-  const datos = {
-    titulo: document.getElementById('prodTitulo').value,
-    descripcion: document.getElementById('prodDesc').value || null,
-    precio: parseFloat(document.getElementById('prodPrecio').value),
-    imagen_url: document.getElementById('prodImagen').value,
-    categoria: document.getElementById('prodCategoria').value,
-    estado: document.getElementById('prodEstado').value,
-    tallas: tallasArray.length > 0 ? tallasArray : ['XS', 'S', 'M', 'L', 'XL']
-  };
-
-  const esEdicion = Boolean(prodId);
-  const endpoint = esEdicion ? `${API_BASE_URL}/${prodId}` : API_BASE_URL;
-  const metodo = esEdicion ? 'PUT' : 'POST';
+  const btnGuardar = document.getElementById('btnGuardar');
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = 'Procesando...';
 
   try {
+    // Si el usuario seleccionó una imagen nueva desde su equipo, la subimos a Supabase Storage primero
+    if (fileInput && fileInput.files.length > 0) {
+      mostrarMensajeAdmin('Subiendo imagen a la nube...', false);
+      imagenUrl = await subirImagenASupabase(fileInput.files[0]);
+    }
+
+    if (!imagenUrl) {
+      mostrarMensajeAdmin('Por favor selecciona una imagen para la prenda.', true);
+      btnGuardar.disabled = false;
+      btnGuardar.textContent = 'Publicar Prenda';
+      return;
+    }
+
+    const tallasTexto = document.getElementById('prodTallas').value;
+    const tallasArray = tallasTexto.split(',').map(t => t.trim()).filter(t => t.length > 0);
+
+    const datos = {
+      titulo: document.getElementById('prodTitulo').value,
+      descripcion: document.getElementById('prodDesc').value || null,
+      precio: parseFloat(document.getElementById('prodPrecio').value),
+      imagen_url: imagenUrl,
+      categoria: document.getElementById('prodCategoria').value,
+      estado: document.getElementById('prodEstado').value,
+      tallas: tallasArray.length > 0 ? tallasArray : ['XS', 'S', 'M', 'L', 'XL']
+    };
+
+    const esEdicion = Boolean(prodId);
+    const endpoint = esEdicion ? `${API_BASE_URL}/${prodId}` : API_BASE_URL;
+    const metodo = esEdicion ? 'PUT' : 'POST';
+
     const respuesta = await fetch(endpoint, {
       method: metodo,
       headers: {
@@ -123,23 +200,29 @@ async function guardarProducto(event) {
     }
   } catch (error) {
     console.error('Error al guardar producto:', error);
-    mostrarMensajeAdmin('Error de conexión con el servidor.', true);
+    mostrarMensajeAdmin(error.message || 'Error de conexión con el servidor.', true);
+  } finally {
+    btnGuardar.disabled = false;
+    btnGuardar.textContent = prodId ? 'Guardar Cambios' : 'Publicar Prenda';
   }
 }
 
-/**
- * Carga los campos en el formulario para editar una prenda seleccionada
- */
 function prepararEdicion(prod) {
   document.getElementById('formTitulo').textContent = 'Editar Prenda';
   document.getElementById('prodId').value = prod.id_producto;
   document.getElementById('prodTitulo').value = prod.titulo;
   document.getElementById('prodPrecio').value = prod.precio;
-  document.getElementById('prodImagen').value = prod.imagen_url;
+  document.getElementById('prodImagenUrl').value = prod.imagen_url;
   document.getElementById('prodCategoria').value = prod.categoria;
   document.getElementById('prodEstado').value = prod.estado;
   document.getElementById('prodTallas').value = Array.isArray(prod.tallas) ? prod.tallas.join(', ') : '';
   document.getElementById('prodDesc').value = prod.descripcion || '';
+
+  // Vista previa de la foto existente
+  const previewContainer = document.getElementById('previewContainer');
+  const imgPreview = document.getElementById('imgPreview');
+  imgPreview.src = prod.imagen_url;
+  previewContainer.style.display = 'block';
 
   document.getElementById('btnGuardar').textContent = 'Guardar Cambios';
   document.getElementById('btnCancelar').style.display = 'block';
@@ -147,9 +230,6 @@ function prepararEdicion(prod) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/**
- * Cambia rápidamente el estado entre 'activo' e 'inactivo'
- */
 async function alternarEstado(id, estadoActual) {
   const token = localStorage.getItem('urban_token');
   const nuevoEstado = estadoActual === 'activo' ? 'inactivo' : 'activo';
@@ -174,9 +254,6 @@ async function alternarEstado(id, estadoActual) {
   }
 }
 
-/**
- * Elimina un producto por ID
- */
 async function eliminarProducto(id) {
   if (!confirm('¿Estás seguro de que deseas borrar definitivamente esta prenda?')) return;
 
@@ -205,6 +282,8 @@ function resetearFormulario() {
   document.getElementById('formTitulo').textContent = 'Agregar Nuevo Producto';
   document.getElementById('productoForm').reset();
   document.getElementById('prodId').value = '';
+  document.getElementById('prodImagenUrl').value = '';
+  document.getElementById('previewContainer').style.display = 'none';
   document.getElementById('btnGuardar').textContent = 'Publicar Prenda';
   document.getElementById('btnCancelar').style.display = 'none';
 }
