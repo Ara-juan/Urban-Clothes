@@ -1,3 +1,5 @@
+const API_PRODUCTOS_URL = 'https://urban-clothes-slc0.onrender.com/api/productos';
+
 /**
  * Desplaza horizontalmente los productos de un carrusel
  * @param {HTMLElement} button - El botón que disparó la función
@@ -18,56 +20,21 @@ function scrollCarousel(button, direction) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- LÓGICA DE MODAL DE PRODUCTO ---
-  const cards = document.querySelectorAll(".card");
-  const modal = document.getElementById("product-modal");
-  const closeModal = document.querySelector(".close-modal");
-
-  const modalImg = document.getElementById("modal-img");
-  const modalTitle = document.getElementById("modal-title");
-  const modalPrice = document.getElementById("modal-price");
-  const modalDesc = document.getElementById("modal-desc");
-
-  // Abrir modal solo si el modal y sus elementos existen en el HTML
-  if (modal && modalImg && modalTitle && modalPrice && modalDesc) {
-    cards.forEach(card => {
-      card.addEventListener("click", () => {
-        const imgElement = card.querySelector("img");
-        const titleElement = card.querySelector("h3");
-        const priceElement = card.querySelector(".price");
-
-        const imgUrl = imgElement ? imgElement.src : "";
-        const title = titleElement ? titleElement.innerText : "Producto";
-        const price = priceElement ? priceElement.innerText : "";
-        const descPersonalizada = card.getAttribute("data-desc") || "Este producto no cuenta con una descripción detallada todavía.";
-
-        // Asignación de datos al modal
-        modalImg.src = imgUrl;
-        modalTitle.innerText = title;
-        modalPrice.innerText = price;
-        modalDesc.innerText = descPersonalizada;
-
-        // Mostrar el modal
-        modal.classList.add("show");
-      });
-    });
-
-    // Cerrar modal al presionar el botón de cierre (X)
-    if (closeModal) {
-      closeModal.addEventListener("click", () => {
-        modal.classList.remove("show");
-      });
-    }
-
-    // Cerrar modal al hacer clic en el fondo oscuro exterior
-    window.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        modal.classList.remove("show");
-      }
-    });
+  // --- CARGA DINÁMICA DE PRODUCTOS SEGÚN LA PÁGINA ---
+  if (document.getElementById('contenedorProductosHombre')) {
+    cargarProductosPorCategoria('hombre', 'contenedorProductosHombre');
+  } else if (document.getElementById('contenedorProductosMujer')) {
+    cargarProductosPorCategoria('mujer', 'contenedorProductosMujer');
+  } else if (document.getElementById('contenedorProductosUnisex')) {
+    cargarProductosPorCategoria('unisex', 'contenedorProductosUnisex');
+  } else if (document.getElementById('contenedorProductosCatalogo')) {
+    cargarProductosPorCategoria('', 'contenedorProductosCatalogo');
+  } else {
+    // Si la página contiene tarjetas estáticas (ej. Colecciones/main.html)
+    activarEventosModal();
   }
 
-// --- LÓGICA DE BÚSQUEDA Y FILTRO POR PRECIO ---
+  // --- LÓGICA DE BÚSQUEDA Y FILTRO POR PRECIO ---
   const searchInput = document.querySelector(".search-bar input");
   const priceFilter = document.getElementById("priceFilter");
 
@@ -78,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".catalog").forEach((section) => {
       let hasVisibleCards = false;
 
-      // Si hay un filtro activo (texto o precio), aplicamos el modo fluido
       if (query.length > 0 || maxPrice !== "all") {
         section.classList.add("is-searching");
       } else {
@@ -89,11 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const title = card.querySelector("h3") ? card.querySelector("h3").innerText.toLowerCase() : "";
         const desc = card.getAttribute("data-desc") ? card.getAttribute("data-desc").toLowerCase() : "";
         
-        // Extraemos solo los dígitos del precio (ejemplo: "$50.000" -> 50000)
         const priceText = card.querySelector(".price") ? card.querySelector(".price").innerText : "0";
         const priceValue = parseInt(priceText.replace(/[^0-9]/g, ""), 10) || 0;
 
-        // Validaciones
         const matchesText = title.includes(query) || desc.includes(query);
         const matchesPrice = maxPrice === "all" || priceValue <= parseInt(maxPrice, 10);
 
@@ -116,4 +80,97 @@ document.addEventListener("DOMContentLoaded", () => {
   if (priceFilter) {
     priceFilter.addEventListener("change", filtrarProductos);
   }
+
+  // Configuración de cierre de modal
+  const modal = document.getElementById("product-modal");
+  const closeModal = document.querySelector(".close-modal");
+
+  if (closeModal && modal) {
+    closeModal.addEventListener("click", () => {
+      modal.classList.remove("show");
+    });
+  }
+
+  if (modal) {
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.remove("show");
+      }
+    });
+  }
 });
+
+/**
+ * Consulta la API y renderiza los productos dinámicos manteniendo la estructura visual
+ */
+async function cargarProductosPorCategoria(categoria, idContenedor) {
+  const contenedor = document.getElementById(idContenedor);
+  if (!contenedor) return;
+
+  try {
+    const url = categoria 
+      ? `${API_PRODUCTOS_URL}?categoria=${categoria}` 
+      : API_PRODUCTOS_URL;
+
+    const respuesta = await fetch(url);
+    if (!respuesta.ok) throw new Error('Error al consultar los productos');
+
+    const productos = await respuesta.json();
+
+    if (productos.length === 0) {
+      contenedor.innerHTML = '<p class="text-center w-100 text-muted py-4">No hay prendas disponibles en esta categoría por el momento.</p>';
+      return;
+    }
+
+    // Estructura idéntica de tarjetas HTML
+    contenedor.innerHTML = productos.map(prod => {
+      const precioFormateado = `$${parseInt(prod.precio, 10).toLocaleString('es-CO')}`;
+      const descripcion = prod.descripcion || 'Sin descripción disponible.';
+
+      return `
+        <div class="card" data-desc="${descripcion.replace(/"/g, '&quot;')}">
+          <img src="${prod.imagen_url}" alt="${prod.titulo}">
+          <h3>${prod.titulo}</h3>
+          <p class="price">${precioFormateado}</p>
+          <p class="desc"></p>
+        </div>
+      `;
+    }).join('');
+
+    // Reactivar eventos del modal tras insertar elementos en el DOM
+    activarEventosModal();
+
+  } catch (error) {
+    console.error('Error cargando el catálogo:', error);
+    contenedor.innerHTML = '<p class="text-center w-100 text-warning py-4">Error al conectar con el servidor de productos.</p>';
+  }
+}
+
+/**
+ * Vincula el evento de clic a las tarjetas para desplegar la información en el modal
+ */
+function activarEventosModal() {
+  const cards = document.querySelectorAll(".card");
+  const modal = document.getElementById("product-modal");
+  const modalImg = document.getElementById("modal-img");
+  const modalTitle = document.getElementById("modal-title");
+  const modalPrice = document.getElementById("modal-price");
+  const modalDesc = document.getElementById("modal-desc");
+
+  if (modal && modalImg && modalTitle && modalPrice && modalDesc) {
+    cards.forEach(card => {
+      card.onclick = () => {
+        const imgElement = card.querySelector("img");
+        const titleElement = card.querySelector("h3");
+        const priceElement = card.querySelector(".price");
+
+        modalImg.src = imgElement ? imgElement.src : "";
+        modalTitle.innerText = titleElement ? titleElement.innerText : "Producto";
+        modalPrice.innerText = priceElement ? priceElement.innerText : "";
+        modalDesc.innerText = card.getAttribute("data-desc") || "Sin descripción.";
+
+        modal.classList.add("show");
+      };
+    });
+  }
+}
