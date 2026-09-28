@@ -1,6 +1,6 @@
-# Americanoshh - E-Commerce de Moda Urbana (Urban Clothes)
+# Americanoshh (Urban Clothes)
 
-**Americanoshh** es una plataforma e-commerce web orientada a la venta de ropa de estilo streetwear y moda urbana. El proyecto incluye un catálogo interactivo con filtrado dinámico de productos, gestión de la sesión de usuarios con tokens JWT y persistencia de datos en PostgreSQL mediante Supabase.
+**Americanoshh** es una página web que muestra el catalogo de la marca de ropa americanoshh. El proyecto incluye un catálogo interactivo con filtrado dinámico de productos, gestión de la sesión de usuarios con tokens JWT y persistencia de datos en PostgreSQL mediante Supabase.
 
 ---
 
