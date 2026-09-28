@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 
-// Configuración amplia de CORS para despliegues (Netlify, Vercel, Render)
+// Configuración amplia de CORS para despliegues (Netlify, Render)
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -25,7 +25,7 @@ if (!JWT_SECRET) {
   process.exit(1);
 }
 
-// MIDDLEWARE DE AUTENTICACIÓN
+// Middleware de autenticación
 const verificarToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -43,7 +43,7 @@ const verificarToken = (req, res, next) => {
   }
 };
 
-// MIDDLEWARE PARA VERIFICAR ROL DE ADMINISTRADOR (Acepta 'ADMINISTRADOR' o 'admin')
+// Middleware para verificar rol de administrador (Acepta 'ADMINISTRADOR' o 'admin', aunque en la base de datos lo tengo como "ADMINISTRADOR")
 const verificarAdmin = (req, res, next) => {
   if (req.usuario && (req.usuario.rol === 'ADMINISTRADOR' || req.usuario.rol === 'admin')) {
     next();
@@ -52,7 +52,7 @@ const verificarAdmin = (req, res, next) => {
   }
 };
 
-// REGISTRO DE USUARIOS
+// registro de usuarios
 app.post('/api/usuarios/registro', async (req, res) => {
   const { nombre, email, contrasena, telefono, direccion } = req.body;
 
@@ -104,7 +104,7 @@ app.post('/api/usuarios/registro', async (req, res) => {
   }
 });
 
-// INICIO DE SESIÓN
+// inicio de sesión
 app.post('/api/usuarios/login', async (req, res) => {
   const { email, contrasena } = req.body;
 
@@ -154,7 +154,7 @@ app.post('/api/usuarios/login', async (req, res) => {
   }
 });
 
-// OBTENER PERFIL
+// obtener perfil
 app.get('/api/usuarios/perfil', verificarToken, async (req, res) => {
   try {
     const usuario = await pool.query(
@@ -172,7 +172,7 @@ app.get('/api/usuarios/perfil', verificarToken, async (req, res) => {
   }
 });
 
-// ACTUALIZAR PERFIL
+// actualizar perfil
 app.put('/api/usuarios/perfil', verificarToken, async (req, res) => {
   const userId = req.usuario.id;
   const { contrasenaActual, nuevaContrasena, telefono, direccion } = req.body;
@@ -223,7 +223,7 @@ app.put('/api/usuarios/perfil', verificarToken, async (req, res) => {
   }
 });
 
-// ELIMINAR CUENTA
+// eliminar cuenta
 app.delete('/api/usuarios/:id', verificarToken, async (req, res) => {
   const { id } = req.params;
 
@@ -245,11 +245,11 @@ app.delete('/api/usuarios/:id', verificarToken, async (req, res) => {
   }
 });
 
-// ==========================================
-// ENDPOINTS DE PRODUCTOS (CRUD)
-// ==========================================
 
-// 1. OBTENER PRODUCTOS ACTIVOS (Público para el catálogo)
+// Endpoints de productos (CRUD)
+
+
+// 1. obtener productos activos (Público para el catálogo)
 app.get('/api/productos', async (req, res) => {
   const { categoria } = req.query;
 
@@ -272,7 +272,7 @@ app.get('/api/productos', async (req, res) => {
   }
 });
 
-// 2. OBTENER UN PRODUCTO POR ID (Público)
+// 2. obtener un producto por ID (Público)
 app.get('/api/productos/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -289,7 +289,7 @@ app.get('/api/productos/:id', async (req, res) => {
   }
 });
 
-// 3. CREAR NUEVO PRODUCTO (Solo Administradores)
+// 3. crear nuevo producto (Solo Administradores)
 app.post('/api/productos', verificarToken, verificarAdmin, async (req, res) => {
   const { titulo, descripcion, precio, imagen_url, categoria, tallas } = req.body;
 
@@ -324,7 +324,7 @@ app.post('/api/productos', verificarToken, verificarAdmin, async (req, res) => {
   }
 });
 
-// 4. ACTUALIZAR PRODUCTO O CAMBIAR SU ESTADO (Solo Administradores)
+// 4. actualizar producto o editar (Solo Administradores)
 app.put('/api/productos/:id', verificarToken, verificarAdmin, async (req, res) => {
   const { id } = req.params;
   const { titulo, descripcion, precio, imagen_url, categoria, tallas, estado } = req.body;
@@ -362,7 +362,7 @@ app.put('/api/productos/:id', verificarToken, verificarAdmin, async (req, res) =
   }
 });
 
-// 5. ELIMINAR PRODUCTO PERMANENTEMENTE (Solo Administradores)
+// 5. eliminar producto permanentemente (Solo Administradores)
 app.delete('/api/productos/:id', verificarToken, verificarAdmin, async (req, res) => {
   const { id } = req.params;
 

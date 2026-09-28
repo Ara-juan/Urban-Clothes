@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://urban-clothes-slc0.onrender.com/api/productos';
+const API_BASE_URL = 'https://urban-clothes-slc0.onrender.com/api/productos'; // ponemos la api
 
 // Configuración de Supabase para subida de archivos
 const SUPABASE_URL = 'https://duuuqlbabwmidigdeybd.supabase.co';
@@ -51,10 +51,8 @@ function manejarSeleccionImagen(e) {
   };
   reader.readAsDataURL(file);
 }
+// esto sube la imagen al bucket "imagenes" en supabase storage
 
-/**
- * Sube la imagen al bucket 'Imagenes' en Supabase Storage
- */
 async function subirImagenASupabase(file) {
   const fileExt = file.name.split('.').pop();
   const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
@@ -292,3 +290,5 @@ function ocultarMensajeAdmin() {
   const msgDiv = document.getElementById('mensajeAdmin');
   if (msgDiv) msgDiv.style.display = 'none';
 }
+
+//me falta poner más comentarios? (también me falta hacer documentación)

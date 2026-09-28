@@ -1,6 +1,4 @@
-/* ==========================================
-   ESTILOS GENERALES
-   ========================================== */
+/*Estilos Generales*/
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
@@ -9,9 +7,7 @@ body {
   color: white;
 }
 
-/* ==========================================
-   NAVBAR
-   ========================================== */
+/*NAVBAR */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -89,9 +85,7 @@ body {
   background: #0056b3;
 }
 
-/* ==========================================
-   SECCIÓN CATÁLOGO
-   ========================================== */
+/*sección catalogo */
 .catalog {
   padding: 40px;
   max-width: 1200px;
@@ -105,9 +99,7 @@ body {
   color: white;
 }
 
-/* ==========================================
-   CUADRÍCULA EN ESCRITORIO (3 PRODUCTOS POR FILA)
-   ========================================== */
+/* Cuadricula en escritorio (3 Productos por fila)*/
 .catalog-grid,
 .products {
   display: flex;
@@ -156,9 +148,7 @@ body {
   color: #ccc;
 }
 
-/* ==========================================
-   MODAL DETALLES DE PRODUCTO
-   ========================================== */
+/*modal detalles de producto*/
 .modal {
   display: none;
   position: fixed;
@@ -321,9 +311,7 @@ body {
   text-align: justify;
 }
 
-/* ==========================================
-   VERSIÓN RESPONSIVE MÓVIL (FILAS CONTINUAS DE A 2)
-   ========================================== */
+/*Versión mobil (Filas de a 2)*/
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;

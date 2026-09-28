@@ -1,14 +1,12 @@
 const API_URL = 'https://urban-clothes-slc0.onrender.com/api/usuarios';
 
-/**
- * Alterna la visibilidad entre los formularios de Login y Registro
- * @param {string} formId - ID del formulario a mostrar ('login' o 'register')
- */
+/** Alterna la visibilidad entre los formularios de Login y Registro
+  @param {string} formId - ID del formulario a mostrar ('login' o 'registro')*/
 function showForm(formId) {
   const forms = document.querySelectorAll('.form');
   const tabs = document.querySelectorAll('.tab');
 
-  // Ocultar todos los formularios y desactivar pestañas
+  // Ocultar todos los formularios y desactiva pestañas
   forms.forEach(form => form.classList.remove('active'));
   tabs.forEach(tab => tab.classList.remove('active'));
 
@@ -28,9 +26,7 @@ function showForm(formId) {
   ocultarMensaje();
 }
 
-/**
- * Muestra un mensaje en pantalla según la respuesta del backend
- */
+// Muestra un mensaje en pantalla según la respuesta del backend
 function mostrarMensaje(texto, esError = false) {
   const msgDiv = document.getElementById('mensajeApi');
   if (!msgDiv) return;
@@ -40,9 +36,7 @@ function mostrarMensaje(texto, esError = false) {
   msgDiv.textContent = texto;
 }
 
-/**
- * Oculta el mensaje dinámico
- */
+//Oculta el mensaje dinámico
 function ocultarMensaje() {
   const msgDiv = document.getElementById('mensajeApi');
   if (msgDiv) {
@@ -50,9 +44,8 @@ function ocultarMensaje() {
   }
 }
 
-/**
- * Procesa el registro de un nuevo usuario enviando datos a la API
- * @param {Event} event - Evento del formulario
+/**Procesa el registro de un nuevo usuario enviando datos a la API
+  @param {Event} event - Evento del formulario
  */
 async function manejarRegistro(event) {
   event.preventDefault();
@@ -92,9 +85,8 @@ async function manejarRegistro(event) {
   }
 }
 
-/**
- * Procesa el inicio de sesión del usuario contra la API
- * @param {Event} event - Evento del formulario
+/**Procesa el inicio de sesión del usuario contra la API
+  @param {Event} event - Evento del formulario
  */
 async function manejarLogin(event) {
   event.preventDefault();
@@ -121,7 +113,7 @@ async function manejarLogin(event) {
 
       mostrarMensaje(resultado.mensaje, false);
 
-      // Redirigir al catálogo principal tras 1 segundo
+      // Redirigir al catálogo principal 
       setTimeout(() => {
         window.location.href = 'colecciones.html';
       }, 1000);

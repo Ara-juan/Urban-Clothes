@@ -1,6 +1,4 @@
-/* ==========================================
-   ESTILOS GENERALES Y BASE (ESCRITORIO)
-   ========================================== */
+/*estilos generales y base (Escritorio)*/
 body {
   margin: 0;
   padding-top: 110px; /* Evita que la navbar fija solape el contenido en escritorio */
@@ -11,9 +9,7 @@ body {
   min-height: 100vh;
 }
 
-/* ==========================================
-   NAVBAR Y NAVEGACIÓN
-   ========================================== */
+/* Navbar y navegación*/
 header {
   position: fixed;
   top: 0;
@@ -60,9 +56,7 @@ header {
   color: #00ffcc;
 }
 
-/* ==========================================
-   CONTENEDOR DE PERFIL
-   ========================================== */
+/* Contenedor de perfil*/
 .profile-wrapper {
   max-width: 480px;
   margin: 0 auto 50px auto;
@@ -91,9 +85,7 @@ header {
   margin-bottom: 20px;
 }
 
-/* ==========================================
-   ESTILOS DE FORMULARIO E INPUTS
-   ========================================== */
+/*estilos de formulario e inputs*/
 .section-title {
   color: #00ffcc;
   font-size: 15px;
@@ -163,9 +155,7 @@ hr.profile-divider {
   margin: 20px 0;
 }
 
-/* ==========================================
-   RESPONSIVE MÓVIL (AJUSTES EXCLUSIVOS PARA MÓVIL)
-   ========================================== */
+/* Responsive mobil*/
 @media (max-width: 768px) {
   body {
     padding-top: 0;

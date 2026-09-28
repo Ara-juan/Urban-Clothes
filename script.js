@@ -20,7 +20,7 @@ function scrollCarousel(button, direction) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- CARGA DINÁMICA DE PRODUCTOS SEGÚN LA PÁGINA ---
+  //Carga dianmica de productos segun la página
   if (document.getElementById('contenedorProductosHombre')) {
     cargarProductosPorCategoria('hombre', 'contenedorProductosHombre');
   } else if (document.getElementById('contenedorProductosMujer')) {
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     activarEventosModal();
   }
 
-  // --- LÓGICA DE BÚSQUEDA Y FILTRO POR PRECIO ---
+  //Logica de busqueda y filtro por precio 
   const searchInput = document.querySelector(".search-bar input");
   const priceFilter = document.getElementById("priceFilter");
 
@@ -104,9 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-/**
- * Consulta la API y renderiza los productos dinámicos manteniendo la estructura visual
- */
+// Consulta la API y renderiza los productos dinámicos manteniendo la estructura visual
+
 async function cargarProductosPorCategoria(categoria, idContenedor) {
   const contenedor = document.getElementById(idContenedor);
   if (!contenedor) return;
@@ -150,9 +149,8 @@ async function cargarProductosPorCategoria(categoria, idContenedor) {
   }
 }
 
-/**
- * Vincula el evento de clic a las tarjetas para desplegar la información en el modal
- */
+//Vincula el evento de clic a las tarjetas para desplegar la información en el modal
+
 function activarEventosModal() {
   const cards = document.querySelectorAll(".card");
   const modal = document.getElementById("product-modal");

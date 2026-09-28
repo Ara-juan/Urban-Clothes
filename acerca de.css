@@ -6,7 +6,7 @@ body {
   color: white;
 }
 
-/* Navbar */
+/* Navbar, osea la parte de arriba */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -131,7 +131,7 @@ body {
   text-decoration: underline;
 }
 
-/* Ajustes Responsive */
+/* Ajustes Responsive para el cel*/
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;

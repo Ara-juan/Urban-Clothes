@@ -1,6 +1,4 @@
-/* ==========================================
-   1. ESTILOS GENERALES Y BASE
-   ========================================== */
+/*  1. ESTILOS GENERALES Y BASE*/
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
@@ -9,9 +7,7 @@ body {
   color: white;
 }
 
-/* ==========================================
-   2. NAVBAR
-   ========================================== */
+/*  2. NAVBAR */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -89,9 +85,7 @@ body {
   background: #0056b3;
 }
 
-/* ==========================================
-   3. SECCIÓN CATÁLOGO Y CARRUSEL EN ESCRITORIO
-   ========================================== */
+/*  3. sección catalogo y carrucel pero versipón escritorio */
 .catalog {
   padding: 40px;
   max-width: 1200px;
@@ -191,9 +185,7 @@ body {
 .left-arrow { left: -40px; }
 .right-arrow { right: -40px; }
 
-/* ==========================================
-   4. MODAL DETALLES
-   ========================================== */
+/* 4. Modal detalles*/
 .modal {
   display: none;
   position: fixed;
@@ -356,9 +348,7 @@ body {
   text-align: justify;
 }
 
-/* ==========================================
-   5. VERSIÓN RESPONSIVE MÓVIL (2 PRODUCTOS EN EL CARRUSEL)
-   ========================================== */
+/* 5. versión mobil (2 productos en carrucel)*/
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;

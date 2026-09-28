@@ -4,9 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   cargarDatosPerfil();
 });
 
-/**
- * Obtiene los datos del usuario desde el backend y llena el formulario
- */
+// Obtiene los datos del usuario desde el backend y llena el formulario
+
 async function cargarDatosPerfil() {
   const token = localStorage.getItem('urban_token');
 
@@ -44,9 +43,7 @@ async function cargarDatosPerfil() {
   }
 }
 
-/**
- * Envia la actualización de datos opcionales y/o contraseña
- */
+//Envia la actualización de datos opcionales y/o contraseña
 async function actualizarPerfil(event) {
   event.preventDefault();
   ocultarMensajePerfil();
