@@ -35,7 +35,7 @@ urban-clothes/
 │   └── unixets/            # Catálogo de ropa unisex
 ├── backend/                 # Código del servidor Node.js
 │   ├── node_modules/
-│   ├── .env                 # Variables de entorno (no subir a git)
+│   ├── .env                 # Variables de entorno (no se sube a git por temas de seguridad)
 │   ├── .env.example         # Plantilla de variables de entorno
 │   ├── db.js                # Conexión a la base de datos PostgreSQL/Supabase
 │   ├── index.js             # API REST, endpoints y middleware de autenticación
